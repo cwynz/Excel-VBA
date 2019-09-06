@@ -1,0 +1,6 @@
+Sub copypastedata_activesheet()
+
+ActiveSheet.Range("B5:C14").Copy
+ActiveSheet.Range("E5:F14").PasteSpecial xlPasteValuesAndNumberFormats
+
+End Sub
