@@ -1,0 +1,47 @@
+Option Explicit
+
+Sub Split_Data_in_workbooks()
+
+Application.ScreenUpdating = False
+Application.DisplayAlerts = False
+
+Dim data_sh As Worksheet
+Set data_sh = ThisWorkbook.Sheets("Data")
+
+Dim setting_Sh As Worksheet
+Set setting_Sh = ThisWorkbook.Sheets("Settings")
+
+Dim nwb As Workbook
+Dim nsh As Worksheet
+
+setting_Sh.Range("A:A").Clear
+data_sh.AutoFilterMode = False
+data_sh.Range("B:B").Copy setting_Sh.Range("A1")
+
+setting_Sh.Range("A:A").RemoveDuplicates 1, xlYes
+
+Dim i As Integer
+
+For i = 2 To Application.CountA(setting_Sh.Range("A:A"))
+    
+    data_sh.UsedRange.AutoFilter 2, setting_Sh.Range("A" & i).Value
+    
+    Set nwb = Workbooks.Add
+    Set nsh = nwb.Sheets(1)
+    
+    data_sh.UsedRange.SpecialCells(xlCellTypeVisible).Copy nsh.Range("B2")
+    nsh.UsedRange.EntireColumn.ColumnWidth = 15
+    
+    nwb.Sheets(1).Range("A:I").Columns.AutoFit
+    
+    nwb.SaveAs setting_Sh.Range("H6").Value & "/" & setting_Sh.Range("A" & i).Value & ".xlsx"
+    nwb.Close True
+    data_sh.AutoFilterMode = False
+    
+Next i
+
+setting_Sh.Range("A:A").Clear
+
+MsgBox "Done"
+
+End Sub
